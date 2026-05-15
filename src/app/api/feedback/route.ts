@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 
   try {
     const result = await resend.emails.send({
-      from: "Mukauta Palaute <onboarding@resend.dev>",
+      from: "Mukauta Palaute <palaute@luukkuai.win>",
       to: "mikko@wpsaavutettavuus.fi",
       subject: `Mukauta-palaute: ${ROLES[role] ?? role}`,
       html: `
