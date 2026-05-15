@@ -19,7 +19,7 @@ export async function POST(req: Request) {
   try {
     await resend.emails.send({
       from: "Mukauta Palaute <onboarding@resend.dev>",
-      to: "mikkotark@protonmail.com",
+      to: "mikko@wpsaavutettavuus.fi",
       subject: `Mukauta-palaute: ${ROLES[role] ?? role}`,
       html: `
         <p><strong>Opettajatyyppi:</strong> ${ROLES[role] ?? role}</p>
