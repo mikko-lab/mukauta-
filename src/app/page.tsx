@@ -44,6 +44,7 @@ export default function Home() {
   const [docxLoading, setDocxLoading] = useState(false);
   const [error, setError] = useState("");
   const [streamDone, setStreamDone] = useState(false);
+  const [copied, setCopied] = useState(false);
   const resultRef = useRef<HTMLElement>(null);
   const resultHeadingRef = useRef<HTMLHeadingElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -124,6 +125,8 @@ export default function Home() {
 
   function handleCopy() {
     navigator.clipboard.writeText(adaptedText);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   }
 
   async function handleDownloadPdf() {
@@ -305,6 +308,12 @@ export default function Home() {
                   rows={10}
                   maxLength={5000}
                   aria-describedby="source-help"
+                  onKeyDown={(e) => {
+                    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+                      e.preventDefault();
+                      handleMukauta();
+                    }
+                  }}
                   style={{
                     width: "100%",
                     fontFamily: "inherit",
@@ -663,7 +672,26 @@ export default function Home() {
                       fontWeight: 700,
                     }}
                   >
-                    Kopioi teksti
+                    {copied ? "Kopioitu ✓" : "Kopioi teksti"}
+                  </button>
+                  <button
+                    onClick={() => {
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                      setTimeout(() => document.getElementById("source-text")?.focus(), 400);
+                    }}
+                    style={{
+                      padding: "11px 18px",
+                      background: "transparent",
+                      border: "1px solid var(--border)",
+                      borderRadius: 999,
+                      fontSize: 14,
+                      cursor: "pointer",
+                      fontFamily: "inherit",
+                      color: "var(--ink-soft)",
+                      fontWeight: 700,
+                    }}
+                  >
+                    Mukauta uudelleen ↑
                   </button>
                 </div>
               )}
