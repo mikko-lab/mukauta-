@@ -43,7 +43,9 @@ export default function Home() {
   const [pdfLoading, setPdfLoading] = useState(false);
   const [docxLoading, setDocxLoading] = useState(false);
   const [error, setError] = useState("");
+  const [streamDone, setStreamDone] = useState(false);
   const resultRef = useRef<HTMLElement>(null);
+  const resultHeadingRef = useRef<HTMLHeadingElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   const [fbRole, setFbRole] = useState("");
@@ -75,6 +77,7 @@ export default function Home() {
     setLoading(true);
     setError("");
     setAdaptedText("");
+    setStreamDone(false);
 
     try {
       const res = await fetch("/api/mukauta", {
@@ -98,8 +101,10 @@ export default function Home() {
         if (value) setAdaptedText((prev) => prev + decoder.decode(value));
       }
 
+      setStreamDone(true);
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        resultHeadingRef.current?.focus();
       }, 100);
     } catch (e: unknown) {
       if (e instanceof Error && e.name !== "AbortError") {
@@ -272,7 +277,7 @@ export default function Home() {
           <section aria-labelledby="tool-heading" className="tool-card">
             <h2
               id="tool-heading"
-              style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0,0,0,0)" }}
+              style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clipPath: "inset(50%)", whiteSpace: "nowrap" }}
             >
               Mukautustyökalu
             </h2>
@@ -518,12 +523,15 @@ export default function Home() {
               >
                 <h2
                   id="result-heading"
+                  ref={resultHeadingRef}
+                  tabIndex={-1}
                   style={{
                     fontFamily: "Fraunces, serif",
                     fontSize: 26,
                     fontWeight: 500,
                     letterSpacing: "-0.015em",
                     margin: 0,
+                    outline: "none",
                   }}
                 >
                   Mukautettu teksti
@@ -558,6 +566,8 @@ export default function Home() {
                   </div>
                   <p
                     className={adaptedClassName}
+                    aria-live="polite"
+                    aria-atomic={streamDone}
                     style={{ fontSize: 16, lineHeight: 1.7, margin: 0, minHeight: 40 }}
                   >
                     {loading && !adaptedText ? (
@@ -681,7 +691,7 @@ export default function Home() {
             </p>
 
             {fbStatus === "done" ? (
-              <p style={{ fontWeight: 700, color: "var(--accent)" }}>Kiitos palautteesta! 🙏</p>
+              <p role="status" style={{ fontWeight: 700, color: "var(--accent)" }}>Kiitos palautteesta!</p>
             ) : (
               <form onSubmit={handleFeedback} noValidate>
                 <fieldset style={{ border: "none", padding: 0, margin: "0 0 20px" }}>
