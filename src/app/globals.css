@@ -16,6 +16,8 @@
 
 * { box-sizing: border-box; }
 
+html, body { overflow-x: hidden; }
+
 body {
   background: var(--paper);
   color: var(--ink);
@@ -45,4 +47,59 @@ body {
   border: 2px solid #000;
   color: #000;
   font-weight: 700;
+}
+
+.tool-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 40px;
+}
+.tool-grid > * { min-width: 0; }
+@media (max-width: 850px) {
+  .tool-grid { grid-template-columns: 1fr; gap: 24px; }
+}
+
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.compare-grid > * { min-width: 0; word-break: break-word; overflow-wrap: break-word; }
+@media (max-width: 700px) {
+  .compare-grid { grid-template-columns: 1fr; }
+  .compare-grid .col-original { border-right: none; border-bottom: 1px solid var(--border); }
+  .compare-grid .col-adapted { border-left: none; border-top: 4px solid var(--accent); }
+}
+
+.wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+@media (max-width: 600px) {
+  .wrap { padding: 20px 16px 60px; }
+}
+
+.tool-card {
+  background: var(--paper-soft);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 40px;
+  margin-bottom: 56px;
+}
+@media (max-width: 600px) {
+  .tool-card { padding: 20px; }
+}
+
+.why-card {
+  margin-top: 80px;
+  padding: 40px;
+  background: var(--paper-soft);
+  border-left: 4px solid var(--accent);
+  border-radius: 2px;
+}
+@media (max-width: 600px) {
+  .why-card { padding: 20px; margin-top: 48px; }
 }

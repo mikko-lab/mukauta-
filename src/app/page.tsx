@@ -176,7 +176,7 @@ export default function Home() {
         <strong>Konsepti</strong> · Tämä on varhainen versio palautteen keräämistä varten.
       </div>
 
-      <div style={{ maxWidth: 1120, margin: "0 auto", padding: "32px 24px 80px" }}>
+      <div className="wrap">
         <header
           style={{
             display: "flex",
@@ -262,16 +262,7 @@ export default function Home() {
           </section>
 
           {/* Tool card */}
-          <section
-            aria-labelledby="tool-heading"
-            style={{
-              background: "var(--paper-soft)",
-              border: "1px solid var(--border)",
-              borderRadius: 4,
-              padding: 40,
-              marginBottom: 56,
-            }}
-          >
+          <section aria-labelledby="tool-heading" className="tool-card">
             <h2
               id="tool-heading"
               style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0,0,0,0)" }}
@@ -279,13 +270,7 @@ export default function Home() {
               Mukautustyökalu
             </h2>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 300px",
-                gap: 40,
-              }}
-            >
+            <div className="tool-grid">
               {/* Left: textarea */}
               <div>
                 <label
@@ -553,22 +538,14 @@ export default function Home() {
                 </span>
               </div>
 
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  border: "1px solid var(--border)",
-                  borderRadius: 4,
-                  overflow: "hidden",
-                }}
-              >
-                <div style={{ padding: 28, background: "var(--paper)", borderRight: "1px solid var(--border)" }}>
+              <div className="compare-grid">
+                <div className="col-original" style={{ padding: 28, background: "var(--paper)", borderRight: "1px solid var(--border)" }}>
                   <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--ink)", marginBottom: 18, fontWeight: 700 }}>
                     Alkuperäinen
                   </div>
                   <p style={{ fontSize: 16, lineHeight: 1.7, margin: 0 }}>{sourceText}</p>
                 </div>
-                <div style={{ padding: 28, background: "var(--highlight)", borderLeft: "4px solid var(--accent)" }}>
+                <div className="col-adapted" style={{ padding: 28, background: "var(--highlight)", borderLeft: "4px solid var(--accent)" }}>
                   <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.14em", color: "var(--ink)", marginBottom: 18, fontWeight: 700 }}>
                     Mukautettu · {type === "selko" ? "Selkokieli" : level}
                   </div>
@@ -677,16 +654,7 @@ export default function Home() {
           )}
 
           {/* Why this */}
-          <section
-            aria-labelledby="why-heading"
-            style={{
-              marginTop: 80,
-              padding: 40,
-              background: "var(--paper-soft)",
-              borderLeft: "4px solid var(--accent)",
-              borderRadius: 2,
-            }}
-          >
+          <section aria-labelledby="why-heading" className="why-card">
             <h2
               id="why-heading"
               style={{ fontFamily: "Fraunces, serif", fontSize: 24, fontWeight: 500, margin: "0 0 16px" }}
