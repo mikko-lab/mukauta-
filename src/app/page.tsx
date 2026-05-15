@@ -163,20 +163,7 @@ export default function Home() {
         Siirry pääsisältöön
       </a>
 
-      <div
-        style={{
-          background: "var(--ink)",
-          color: "var(--paper)",
-          padding: "12px 24px",
-          textAlign: "center",
-          fontSize: "14px",
-        }}
-        role="status"
-      >
-        <strong>Konsepti</strong> · Tämä on varhainen versio palautteen keräämistä varten.
-      </div>
-
-      <div className="wrap">
+<div className="wrap">
         <header
           style={{
             display: "flex",
