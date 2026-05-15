@@ -46,6 +46,26 @@ export default function Home() {
   const resultRef = useRef<HTMLElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
+  const [fbRole, setFbRole] = useState("");
+  const [fbComment, setFbComment] = useState("");
+  const [fbStatus, setFbStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
+
+  async function handleFeedback(e: React.FormEvent) {
+    e.preventDefault();
+    if (!fbRole) return;
+    setFbStatus("sending");
+    try {
+      const res = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: fbRole, comment: fbComment }),
+      });
+      setFbStatus(res.ok ? "done" : "error");
+    } catch {
+      setFbStatus("error");
+    }
+  }
+
   async function handleMukauta() {
     if (!sourceText.trim()) return;
     if (abortRef.current) abortRef.current.abort();
@@ -639,6 +659,112 @@ export default function Home() {
               )}
             </section>
           )}
+
+          {/* Feedback */}
+          <section
+            aria-labelledby="feedback-heading"
+            style={{
+              marginTop: 80,
+              paddingTop: 48,
+              borderTop: "1px solid var(--border)",
+              maxWidth: 560,
+            }}
+          >
+            <h2
+              id="feedback-heading"
+              style={{ fontFamily: "Fraunces, serif", fontStyle: "italic", fontSize: 28, fontWeight: 400, margin: "0 0 12px" }}
+            >
+              Tarvitsetko tällaista työkalua?
+            </h2>
+            <p style={{ color: "var(--ink-soft)", margin: "0 0 28px", lineHeight: 1.6 }}>
+              Rakennan Mukautaa S2-opettajille ja erityisopettajille. Anna minulle 30 sekuntia — se auttaa priorisoimaan oikeat ominaisuudet.
+            </p>
+
+            {fbStatus === "done" ? (
+              <p style={{ fontWeight: 700, color: "var(--accent)" }}>Kiitos palautteesta! 🙏</p>
+            ) : (
+              <form onSubmit={handleFeedback} noValidate>
+                <fieldset style={{ border: "none", padding: 0, margin: "0 0 20px" }}>
+                  <legend style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 12, display: "block" }}>
+                    Olen
+                  </legend>
+                  {[
+                    { value: "s2", label: "S2-opettaja" },
+                    { value: "erityis", label: "Laaja-alainen erityisopettaja" },
+                    { value: "luokka", label: "Luokanopettaja" },
+                    { value: "muu", label: "Muu" },
+                  ].map((opt) => (
+                    <label
+                      key={opt.value}
+                      style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10, cursor: "pointer", fontSize: 16 }}
+                    >
+                      <input
+                        type="radio"
+                        name="role"
+                        value={opt.value}
+                        checked={fbRole === opt.value}
+                        onChange={(e) => setFbRole(e.target.value)}
+                        style={{ width: 18, height: 18, accentColor: "var(--accent)", flexShrink: 0 }}
+                      />
+                      {opt.label}
+                    </label>
+                  ))}
+                </fieldset>
+
+                <div style={{ marginBottom: 20 }}>
+                  <label
+                    htmlFor="fb-comment"
+                    style={{ display: "block", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: 8 }}
+                  >
+                    Kommentti (vapaaehtoinen)
+                  </label>
+                  <textarea
+                    id="fb-comment"
+                    value={fbComment}
+                    onChange={(e) => setFbComment(e.target.value)}
+                    rows={3}
+                    placeholder="Mitä tarvitset? Mikä puuttuu? Vapaa sana."
+                    style={{
+                      width: "100%",
+                      fontFamily: "inherit",
+                      fontSize: 15,
+                      padding: "12px 14px",
+                      background: "var(--paper)",
+                      color: "var(--ink)",
+                      border: "1px solid var(--border)",
+                      borderRadius: 2,
+                      lineHeight: 1.5,
+                      resize: "vertical",
+                    }}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={!fbRole || fbStatus === "sending"}
+                  style={{
+                    fontFamily: "inherit",
+                    fontSize: 16,
+                    fontWeight: 700,
+                    padding: "14px 28px",
+                    background: "var(--accent)",
+                    color: "var(--paper-soft)",
+                    border: "none",
+                    borderRadius: 2,
+                    cursor: !fbRole || fbStatus === "sending" ? "not-allowed" : "pointer",
+                    opacity: !fbRole || fbStatus === "sending" ? 0.6 : 1,
+                  }}
+                >
+                  {fbStatus === "sending" ? "Lähetetään…" : "Lähetä palaute →"}
+                </button>
+                {fbStatus === "error" && (
+                  <p style={{ marginTop: 12, color: "var(--warn)", fontWeight: 700 }} role="alert">
+                    ⚠ Lähetys epäonnistui. Kokeile uudelleen.
+                  </p>
+                )}
+              </form>
+            )}
+          </section>
 
           {/* Why this */}
           <section aria-labelledby="why-heading" className="why-card">
