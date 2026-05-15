@@ -17,7 +17,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    await resend.emails.send({
+    const result = await resend.emails.send({
       from: "Mukauta Palaute <onboarding@resend.dev>",
       to: "mikko@wpsaavutettavuus.fi",
       subject: `Mukauta-palaute: ${ROLES[role] ?? role}`,
@@ -29,6 +29,9 @@ export async function POST(req: Request) {
       `,
     });
 
+    if (result.error) {
+      return new Response(JSON.stringify(result.error), { status: 500 });
+    }
     return new Response("ok", { status: 200 });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Tuntematon virhe";
