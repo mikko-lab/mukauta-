@@ -1,6 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { getRatelimit, getClientIp, isOriginAllowed } from "@/lib/ratelimit";
 
 const client = new Anthropic();
+
+const MAX_INPUT = 10_000;
 
 const LEVEL_DESCRIPTIONS: Record<string, string> = {
   "A1.1":
@@ -60,11 +63,25 @@ Palauta VAIN mukautettu teksti. Ei selityksiä, ei kommentteja, ei alkuperäist�
 }
 
 export async function POST(req: Request) {
+  if (!isOriginAllowed(req)) {
+    return new Response("Forbidden", { status: 403 });
+  }
+
+  const rl = getRatelimit();
+  if (rl) {
+    const { success } = await rl.limit(`mukauta:${getClientIp(req)}`);
+    if (!success) return new Response("Liian monta pyyntöä", { status: 429 });
+  }
+
   try {
     const { text, type, level, keepKeywords, addGlossary } = await req.json();
 
     if (!text?.trim()) {
       return new Response("Teksti puuttuu", { status: 400 });
+    }
+
+    if (text.length > MAX_INPUT) {
+      return new Response(`Teksti liian pitkä (max ${MAX_INPUT} merkkiä)`, { status: 400 });
     }
 
     const systemPrompt = buildSystemPrompt(type, level, keepKeywords, addGlossary);
